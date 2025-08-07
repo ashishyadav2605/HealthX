@@ -47,7 +47,7 @@ export default function Auth() {
           onClose: () => router.push('/')
         });
       } else {
-        toast.success('Account created successfully! Redirecting to login...', {
+        toast.success('Account created successfully! Redirecting...', {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -56,11 +56,7 @@ export default function Auth() {
           draggable: true,
           progress: undefined,
           theme: "light",
-          onClose: () => {
-            setIsLogin(true);
-            setEmail('');
-            setPassword('');
-          }
+          onClose: () => router.push('/')
         });
       }
     } catch (err) {
@@ -92,7 +88,7 @@ export default function Auth() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
@@ -144,6 +140,7 @@ export default function Auth() {
           <button
             type="submit"
             disabled={isLoading}
+            onClick={handleSubmit}
             className={`w-full py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center ${
               isLoading
                 ? 'bg-blue-400 cursor-not-allowed'
@@ -162,7 +159,7 @@ export default function Auth() {
               </>
             )}
           </button>
-        </form>
+        </div>
 
         <div className="mt-6 text-center text-sm text-gray-600">
           <p>
