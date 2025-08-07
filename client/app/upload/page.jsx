@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Upload() {
@@ -87,6 +87,16 @@ export default function Upload() {
       setIsUploading(false);
     }
   };
+
+  // Redirect to documents page after successful upload
+  useEffect(() => {
+    if (uploadComplete) {
+      const timer = setTimeout(() => {
+        router.push('/documents');
+      }, 1500); // Delay to show success message briefly
+      return () => clearTimeout(timer);
+    }
+  }, [uploadComplete, router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center p-4">
