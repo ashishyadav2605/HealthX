@@ -22,6 +22,6 @@
       "@/*": ["./*"],
     }
   },
-  "include": ["next-env.d.js", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "next.config.js", "app/layout.jsx", "app/not-found.jsx", "app/page.jsx", "components/ABHASteps.jsx", "components/FeatureCard.jsx", "components/FeaturesSection.jsx", "components/Feedbacks.jsx", "components/Footer.jsx", "components/HassleFreeLX.jsx", "components/Header.jsx", "components/HeroSection.jsx", "components/NetworkFlowAnimation.jsx", "components/Newsletter.jsx", "components/PrivacyNote.jsx", "components/SeamlessAccess.jsx"],
+  "include": ["next-env.d.js", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "next.config.js", "app/layout.jsx", "app/not-found.jsx", "app/page.jsx", "app/components/ABHASteps.jsx", "app/components/FeatureCard.jsx", "app/components/FeaturesSection.jsx", "app/components/Feedbacks.jsx", "app/components/Footer.jsx", "app/components/HassleFreeLX.jsx", "app/components/Header.jsx", "app/components/HeroSection.jsx", "app/components/NetworkFlowAnimation.jsx", "app/components/Newsletter.jsx", "app/components/PrivacyNote.jsx", "app/components/SeamlessAccess.jsx"],
   "exclude": ["node_modules"]
 }
