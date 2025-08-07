@@ -40,7 +40,10 @@ const connectDB = async () => {
   let retries = 5;
   while (retries) {
     try {
-      await mongoose.connect(process.env.MONGO_URI);
+      await mongoose.connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
       console.log('Connected to MongoDB');
       break;
     } catch (err) {
@@ -56,14 +59,8 @@ const connectDB = async () => {
 };
 connectDB();
 
-// Check MongoDB connection status
-mongoose.connection.on('disconnected', () => {
-  console.error('MongoDB disconnected. Attempting to reconnect...');
-  connectDB();
-});
-
 const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true, trim: true, lowercase: true },
+  email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   documents: [
     {
@@ -82,7 +79,7 @@ const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) return res.status(401).json({ message: 'Access denied: No token provided' });
+  if (!token) return res.status(401).json({ message: 'Access denied' });
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ message: 'Invalid or expired token' });
@@ -141,13 +138,13 @@ app.post('/api/admin/login', async (req, res) => {
     const adminPassword = process.env.ADMIN_PASSWORD;
 
     if (email !== adminEmail || password !== adminPassword) {
-      return res.status(401).json({ message: 'Invalid admin credentials' });
+      return res.status(400).json({ message: 'Invalid admin credentials' });
     }
 
     const token = jwt.sign({ email, isAdmin: true }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
-    res.json({ token, isAdmin: true });
+    res.json({ token });
   } catch (error) {
     console.error('Admin login error:', error);
     res.status(500).json({ message: 'Server error: ' + error.message });
@@ -160,34 +157,15 @@ app.post('/api/auth/signup', async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
     }
-
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: 'Invalid email format' });
-    }
-
-    // Password strength validation (e.g., minimum 8 characters)
-    if (password.length < 8) {
-      return res.status(400).json({ message: 'Password must be at least 8 characters long' });
-    }
-
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = new User({ email, password: hashedPassword });
     await user.save();
-
-    // Generate JWT token after signup
-    const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
-
-    res.status(201).json({ message: 'User created successfully', token });
+    res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
     console.error('Signup error:', error);
     res.status(500).json({ message: 'Server error: ' + error.message });
@@ -200,25 +178,17 @@ app.post('/api/auth/login', async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
     }
-
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
-
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
-
     const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
-
-    // Update last activity
-    user.lastActivity = new Date();
-    await user.save();
-
     res.json({ token });
   } catch (error) {
     console.error('Login error:', error);
@@ -228,20 +198,11 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.get('/api/auth/profile', authenticateToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select('email documents documentCount lastActivity');
+    const user = await User.findById(req.user.userId).select('email documents.path');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
-    res.json({
-      email: user.email,
-      documents: user.documents.map(doc => ({
-        path: doc.path,
-        timestamp: doc.timestamp,
-      })),
-      documentCount: user.documentCount,
-      lastActivity: user.lastActivity,
-    });
+    res.json({ email: user.email, documents: user.documents.map(doc => doc.path) });
   } catch (error) {
     console.error('Profile error:', error);
     res.status(500).json({ message: 'Server error: ' + error.message });
@@ -254,15 +215,7 @@ app.get('/api/auth/profile-with-timestamps', authenticateToken, async (req, res)
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
-    res.json({
-      email: user.email,
-      documents: user.documents.map(doc => ({
-        path: doc.path,
-        timestamp: doc.timestamp,
-        jsonData: doc.jsonData,
-      })),
-    });
+    res.json({ email: user.email, documents: user.documents });
   } catch (error) {
     console.error('Profile with timestamps error:', error);
     res.status(500).json({ message: 'Server error: ' + error.message });
@@ -271,6 +224,7 @@ app.get('/api/auth/profile-with-timestamps', authenticateToken, async (req, res)
 
 app.post('/api/auth/upload', authenticateToken, upload.single('document'), async (req, res) => {
   try {
+    console.log('Upload request received:', req.file, req.user);
     const user = await User.findById(req.user.userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -299,7 +253,6 @@ app.post('/api/auth/upload', authenticateToken, upload.single('document'), async
     user.documentCount = user.documents.length;
     user.lastActivity = new Date();
     await user.save();
-
     res.json({ message: 'Document uploaded successfully', filePath });
   } catch (error) {
     console.error('Upload error:', error);
@@ -324,7 +277,7 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
         $group: {
           _id: null,
           totalUsers: { $sum: 1 },
-          totalDocs: { $sum: '$documentCount' },
+          totalDocs: { $sum: '$documents.length' },
           activeUsers: {
             $sum: {
               $cond: [{ $gt: ['$lastActivity', new Date(Date.now() - 24 * 60 * 60 * 1000)] }, 1, 0]
@@ -344,9 +297,6 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
 // Global error handler
 app.use((err, req, res, next) => {
   console.error('Global error:', err.stack);
-  if (err.message === 'Only PDF files are allowed') {
-    return res.status(400).json({ message: err.message });
-  }
   res.status(500).json({ message: 'Internal server error' });
 });
 

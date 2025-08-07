@@ -47,7 +47,7 @@ export default function Auth() {
           onClose: () => router.push('/')
         });
       } else {
-        toast.success('Account created successfully! Redirecting...', {
+        toast.success('Account created successfully! Please login...', {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -56,7 +56,10 @@ export default function Auth() {
           draggable: true,
           progress: undefined,
           theme: "light",
-          onClose: () => router.push('/')
+          onClose: () => {
+            setIsLogin(true); 
+            router.push('/login'); 
+          }
         });
       }
     } catch (err) {
