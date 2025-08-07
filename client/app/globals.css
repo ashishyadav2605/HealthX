@@ -1,0 +1,21 @@
+
+@import url('https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.min.css');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@keyframes spin-clockwise {
+  from {
+    transform: rotate(0deg) translateY(-100%) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateY(-100%) rotate(-360deg);
+  }
+}
+@keyframes orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

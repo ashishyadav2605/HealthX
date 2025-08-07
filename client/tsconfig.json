@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"],
+    }
+  },
+  "include": ["next-env.d.js", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "next.config.js", "app/layout.jsx", "app/not-found.jsx", "app/page.jsx", "components/ABHASteps.jsx", "components/FeatureCard.jsx", "components/FeaturesSection.jsx", "components/Feedbacks.jsx", "components/Footer.jsx", "components/HassleFreeLX.jsx", "components/Header.jsx", "components/HeroSection.jsx", "components/NetworkFlowAnimation.jsx", "components/Newsletter.jsx", "components/PrivacyNote.jsx", "components/SeamlessAccess.jsx"],
+  "exclude": ["node_modules"]
+}
