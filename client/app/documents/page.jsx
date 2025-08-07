@@ -81,13 +81,22 @@ export default function Documents() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        <button
-          onClick={() => router.push('/')}
-          className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition-colors"
-        >
-          <i className="ri-arrow-left-line mr-2"></i>
-          Back to Home
-        </button>
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={() => router.push('/')}
+            className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            <i className="ri-arrow-left-line mr-2"></i>
+            Back to Home
+          </button>
+          <button
+            onClick={() => router.push('/upload')}
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <i className="ri-upload-cloud-line mr-2"></i>
+            Upload Document
+          </button>
+        </div>
 
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-800 mb-2">My Documents Timeline</h2>
