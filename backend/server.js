@@ -123,6 +123,10 @@ const upload = multer({
   },
 });
 
+app.get('/', (req, res) => {
+  res.send('Welcome to the HealthX API');
+});
+
 app.post('/api/admin/login', async (req, res) => {
   try {
     const { email, password } = req.body;
