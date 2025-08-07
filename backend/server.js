@@ -18,18 +18,46 @@ if (!process.env.MONGO_URI || !process.env.JWT_SECRET || !process.env.ADMIN_EMAI
 }
 
 const app = express();
+
+// Enhanced CORS configuration
 app.use(cors({
-  origin: 'https://aarogya-task-ashish.vercel.app', // Adjust to your frontend URL
+  origin: 'https://aarogya-task-ashish.vercel.app',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+// Create uploads directory if it doesn't exist
+const uploadDir = './uploads';
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// MongoDB connection with retry logic
+const connectDB = async () => {
+  let retries = 5;
+  while (retries) {
+    try {
+      await mongoose.connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      console.log('Connected to MongoDB');
+      break;
+    } catch (err) {
+      console.error('MongoDB connection error:', err);
+      retries -= 1;
+      if (retries === 0) {
+        console.error('MongoDB connection failed after retries');
+        process.exit(1);
+      }
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+  }
+};
+connectDB();
 
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
@@ -41,8 +69,8 @@ const userSchema = new mongoose.Schema({
       jsonData: { type: Object },
     },
   ],
-  documentCount: { type: Number, default: 0 }, // Added for stats
-  lastActivity: { type: Date, default: Date.now }, // Added for stats
+  documentCount: { type: Number, default: 0 },
+  lastActivity: { type: Date, default: Date.now },
 });
 
 const User = mongoose.model('User', userSchema);
@@ -50,7 +78,7 @@ const User = mongoose.model('User', userSchema);
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-  
+
   if (!token) return res.status(401).json({ message: 'Access denied' });
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
@@ -64,21 +92,14 @@ const authenticateToken = (req, res, next) => {
 };
 
 const storage = multer.diskStorage({
-  destination: './uploads/',
+  destination: (req, file, cb) => {
+    cb(null, './uploads/');
+  },
   filename: (req, file, cb) => {
-    const originalName = file.originalname;
-    let uniqueName = originalName;
-
-    if (fs.existsSync(path.join('./uploads/', uniqueName))) {
-      let counter = 1;
-      const ext = path.extname(originalName);
-      const nameWithoutExt = path.basename(originalName, ext);
-      while (fs.existsSync(path.join('./uploads/', `${nameWithoutExt}_${counter}${ext}`))) {
-        counter++;
-      }
-      uniqueName = `${nameWithoutExt}_${counter}${ext}`;
-    }
-    cb(null, uniqueName);
+    const ext = path.extname(file.originalname);
+    const name = path.basename(file.originalname, ext);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, `${name}-${uniqueSuffix}${ext}`);
   },
 });
 
@@ -103,6 +124,7 @@ app.post('/api/admin/login', async (req, res) => {
     });
     res.json({ token });
   } catch (error) {
+    console.error('Admin login error:', error);
     res.status(500).json({ message: 'Server error: ' + error.message });
   }
 });
@@ -123,6 +145,7 @@ app.post('/api/auth/signup', async (req, res) => {
     await user.save();
     res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
+    console.error('Signup error:', error);
     res.status(500).json({ message: 'Server error: ' + error.message });
   }
 });
@@ -146,6 +169,7 @@ app.post('/api/auth/login', async (req, res) => {
     });
     res.json({ token });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ message: 'Server error: ' + error.message });
   }
 });
@@ -158,6 +182,7 @@ app.get('/api/auth/profile', authenticateToken, async (req, res) => {
     }
     res.json({ email: user.email, documents: user.documents.map(doc => doc.path) });
   } catch (error) {
+    console.error('Profile error:', error);
     res.status(500).json({ message: 'Server error: ' + error.message });
   }
 });
@@ -170,12 +195,14 @@ app.get('/api/auth/profile-with-timestamps', authenticateToken, async (req, res)
     }
     res.json({ email: user.email, documents: user.documents });
   } catch (error) {
+    console.error('Profile with timestamps error:', error);
     res.status(500).json({ message: 'Server error: ' + error.message });
   }
 });
 
 app.post('/api/auth/upload', authenticateToken, upload.single('document'), async (req, res) => {
   try {
+    console.log('Upload request received:', req.file, req.user);
     const user = await User.findById(req.user.userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -185,7 +212,7 @@ app.post('/api/auth/upload', authenticateToken, upload.single('document'), async
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    const filePath = req.file.path;
+    const filePath = req.file.path.replace(/\\/g, '/'); // Normalize path for consistency
     let jsonData = null;
 
     if (path.extname(filePath).toLowerCase() === '.pdf') {
@@ -195,27 +222,28 @@ app.post('/api/auth/upload', authenticateToken, upload.single('document'), async
         jsonData = { text: pdfData.text };
         fs.writeFileSync(filePath.replace('.pdf', '.json'), JSON.stringify(jsonData, null, 2));
       } catch (pdfError) {
+        console.error('PDF processing error:', pdfError);
         return res.status(500).json({ message: 'Error processing PDF: ' + pdfError.message });
       }
     }
 
-    user.documents.push({ path: filePath, timestamp: fs.statSync(filePath).birthtime, jsonData });
-    user.documentCount = user.documents.length; // Update document count
-    user.lastActivity = new Date(); // Update last activity
+    user.documents.push({ path: filePath, timestamp: new Date(), jsonData });
+    user.documentCount = user.documents.length;
+    user.lastActivity = new Date();
     await user.save();
-    res.json({ message: 'Document uploaded successfully' });
+    res.json({ message: 'Document uploaded successfully', filePath });
   } catch (error) {
     console.error('Upload error:', error);
     res.status(500).json({ message: 'Server error: ' + error.message });
   }
 });
 
-// Admin routes
 app.get('/api/admin/users', authenticateToken, async (req, res) => {
   try {
     const users = await User.find().select('email documents documentCount lastActivity createdAt');
     res.json({ users });
   } catch (error) {
+    console.error('Admin users error:', error);
     res.status(500).json({ message: 'Server error: ' + error.message });
   }
 });
@@ -239,9 +267,16 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
     ]);
     res.json(stats.length ? stats[0] : { totalUsers: 0, totalDocs: 0, activeUsers: 0, users: [] });
   } catch (error) {
+    console.error('Admin stats error:', error);
     res.status(500).json({ message: 'Server error: ' + error.message });
   }
 });
 
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Global error:', err.stack);
+  res.status(500).json({ message: 'Internal server error' });
+});
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
