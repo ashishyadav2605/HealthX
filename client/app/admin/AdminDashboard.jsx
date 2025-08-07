@@ -217,7 +217,6 @@ export default function AdminDashboard() {
                             </div>
                             <div className="ml-4">
                               <div className="text-sm font-medium text-gray-900">{user.email}</div>
-                              <div className="text-sm text-gray-500">Joined: {new Date(user.createdAt).toLocaleDateString()}</div>
                             </div>
                           </div>
                         </td>
