@@ -26,17 +26,11 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
-app.options('*', cors({
-  origin: 'https://aarogya-task-ashish.vercel.app',
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}));
 app.use(express.json());
-app.use('/uploads', express.static('/uploads')); // Updated to persistent disk path
+app.use('/uploads', express.static('uploads'));
 
 // Create uploads directory if it doesn't exist
-const uploadDir = '/uploads'; // Use Render's persistent disk path
+const uploadDir = './uploads';
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -46,7 +40,10 @@ const connectDB = async () => {
   let retries = 5;
   while (retries) {
     try {
-      await mongoose.connect(process.env.MONGO_URI); // Removed deprecated options
+      await mongoose.connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
       console.log('Connected to MongoDB');
       break;
     } catch (err) {
@@ -96,7 +93,7 @@ const authenticateToken = (req, res, next) => {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, '/uploads/'); // Updated to persistent disk path
+    cb(null, './uploads/');
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
@@ -104,8 +101,9 @@ const storage = multer.diskStorage({
     let newFilename = file.originalname;
     let index = 1;
 
-    while (fs.existsSync(path.join('/uploads/', newFilename))) {
-      newFilename = `${baseName}(${index})${ext}`;
+    while (fs.existsSync(path.join('./uploads/', newFilename))) {
+      const nameWithoutExt = path.basename(newFilename, ext);
+      newFilename = `${nameWithoutExt}${index}${ext}`;
       index++;
     }
 
