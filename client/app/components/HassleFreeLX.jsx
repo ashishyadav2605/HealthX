@@ -2,9 +2,9 @@
 
 export default function HassleFreeLX() {
   const screenshots = [
-    'https://readdy.ai/api/search-image?query=Mobile%20app%20screenshot%20showing%20medical%20report%20upload%20interface%20with%20clean%20modern%20design%2C%20healthcare%20app%20UI%20with%20document%20upload%20buttons%20and%20progress%20indicators%2C%20white%20background%20medical%20interface&width=300&height=600&seq=screen1&orientation=portrait',
-    'https://readdy.ai/api/search-image?query=Healthcare%20mobile%20app%20screenshot%20displaying%20health%20data%20dashboard%20with%20charts%20and%20medical%20information%2C%20modern%20medical%20app%20interface%20with%20blue%20accents%20and%20clean%20white%20design&width=300&height=600&seq=screen2&orientation=portrait',
-    'https://readdy.ai/api/search-image?query=Mobile%20health%20insurance%20app%20screenshot%20showing%20personalized%20insurance%20plans%20and%20recommendations%2C%20modern%20healthcare%20app%20UI%20with%20policy%20options%20and%20pricing%2C%20clean%20medical%20interface%20design&width=300&height=600&seq=screen3&orientation=portrait'
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUjFma9BfjdGY8tFFqWnqKWAymjVfFmQ59dw&s',
+    'https://www.ihhhealthcare.com/images/default-source/ihh/myhealth360/landing02.webp?sfvrsn=43a3696e_1',
+    'https://cdn.masto.host/iosdevspace/media_attachments/files/109/835/598/026/288/589/original/558aa23f9061f143.png'
   ];
 
   return (
