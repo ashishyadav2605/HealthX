@@ -194,7 +194,7 @@ export default function Upload() {
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-500">
-          <p>Supported formats: PDF, DOCX, JPG, PNG</p>
+          <p>Supported format: PDF</p>
           <p className="mt-1">Max file size: 5MB</p>
         </div>
       </div>
