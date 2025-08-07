@@ -10,19 +10,19 @@ export default function ABHASteps() {
       icon: 'ri-link',
       title: 'Link Your ABHA ID',
       description: 'Connect your Ayushman Bharat Health Account for seamless health data integration.',
-      image: 'https://readdy.ai/api/search-image?query=Digital%20ABHA%20health%20ID%20card%20linking%20process%20on%20mobile%20device%20with%20Indian%20healthcare%20system%20integration%2C%20modern%20healthcare%20technology%20interface%20with%20blue%20and%20white%20design&width=400&height=300&seq=abha1&orientation=landscape'
+      image: 'https://9to5mac.com/wp-content/uploads/sites/6/2023/06/create-custom-apple-fitness-plans.jpg?quality=82&strip=all&w=1600'
     },
     {
       icon: 'ri-upload-cloud-2-line',
       title: 'Upload Medical Documents',
       description: 'Securely upload your medical reports, prescriptions, and health records to the platform.',
-      image: 'https://readdy.ai/api/search-image?query=Medical%20documents%20and%20reports%20being%20uploaded%20to%20digital%20healthcare%20platform%2C%20document%20scanning%20and%20upload%20interface%20on%20mobile%20app%20with%20clean%20medical%20design&width=400&height=300&seq=abha2&orientation=landscape'
+      image: 'https://roojh.com/wp-content/uploads/2024/12/Blog-1-600-.jpg'
     },
     {
       icon: 'ri-gift-line',
       title: 'Earn Health Rewards',
       description: 'Get rewarded with better insurance rates and health benefits based on your wellness data.',
-      image: 'https://readdy.ai/api/search-image?query=Healthcare%20rewards%20and%20benefits%20interface%20showing%20insurance%20savings%20and%20health%20incentives%2C%20mobile%20app%20displaying%20reward%20points%20and%20healthcare%20benefits%20with%20modern%20design&width=400&height=300&seq=abha3&orientation=landscape'
+      image: 'https://health-e.in/wp-content/uploads/2024/01/1Group-1157-copy.webp'
     }
   ];
 
