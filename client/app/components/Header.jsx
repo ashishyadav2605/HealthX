@@ -86,7 +86,12 @@ export default function Header() {
   };
 
   const handleContactClick = () => {
-    handleRestrictedAction('contact us', '#contact');
+    const newsletterSection = document.getElementById('newsletter');
+    if (newsletterSection) {
+      newsletterSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    setShowProfileMenu(false);
+    setIsMobileMenuOpen(false);
   };
 
   if (loading) {

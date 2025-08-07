@@ -313,53 +313,58 @@ const NetworkFlowAnimation = () => {
 
                   {/* Messages content */}
                   <div className="flex-1 p-3 overflow-y-auto space-y-2">
-                    {[
-                      {
-                        text: "Hey! How are you doing?",
-                        time: "10:30 AM",
-                        incoming: true,
-                      },
-                      {
-                        text: "I'm good, thanks!",
-                        time: "10:32 AM",
-                        incoming: false,
-                      },
-                      {
-                        text: "Great to hear that!",
-                        time: "10:35 AM",
-                        incoming: true,
-                      },
-                      {
-                        text: "Let's catch up soon",
-                        time: "10:37 AM",
-                        incoming: false,
-                      },
-                    ].map((msg, i) => (
-                      <div
-                        key={i}
-                        className={`flex ${
-                          msg.incoming ? "justify-start" : "justify-end"
-                        }`}
-                      >
-                        <div
-                          className={`max-w-[80%] px-3 py-2 rounded-xl ${
-                            msg.incoming
-                              ? "bg-white rounded-bl-sm"
-                              : "bg-blue-500 rounded-br-sm text-white"
-                          }`}
-                        >
-                          <p className="text-xs">{msg.text}</p>
-                          <span
-                            className={`text-[0.6rem] ${
-                              msg.incoming ? "text-gray-500" : "text-blue-200"
-                            }`}
-                          >
-                            {msg.time}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+  {[
+    {
+      text: "Hello! We've successfully secured all your medical documents in our encrypted system.",
+      time: "10:30 AM",
+      incoming: true,
+    },
+    {
+      text: "Thank you for keeping my documents safe!",
+      time: "10:32 AM",
+      incoming: false,
+    },
+    {
+      text: "It's our pleasure! Your records are protected with bank-level encryption and regular backups.",
+      time: "10:35 AM",
+      incoming: true,
+    },
+    {
+      text: "That's reassuring to know. I appreciate your service!",
+      time: "10:37 AM",
+      incoming: false,
+    },
+    {
+      text: "The pleasure is ours! Would you like us to notify you whenever we perform security updates on your files?",
+      time: "10:40 AM",
+      incoming: true,
+    }
+  ].map((msg, i) => (
+    <div
+      key={i}
+      className={`flex ${
+        msg.incoming ? "justify-start" : "justify-end"
+      }`}
+    >
+      <div
+        className={`max-w-[80%] px-3 py-2 rounded-xl ${
+          msg.incoming
+            ? "bg-white rounded-bl-sm"
+            : "bg-blue-500 rounded-br-sm text-white"
+        }`}
+      >
+        <p className="text-xs">{msg.text}</p>
+        <span
+          className={`text-[0.6rem] ${
+            msg.incoming ? "text-gray-500" : "text-blue-200"
+          }`}
+        >
+          {msg.time}
+        </span>
+      </div>
+    </div>
+  ))}
+</div>
 
                   {/* Input area */}
                   <div className="px-3 pb-3">
