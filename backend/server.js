@@ -26,11 +26,17 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
+app.options('*', cors({
+  origin: 'https://aarogya-task-ashish.vercel.app',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}));
 app.use(express.json());
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static('/uploads')); // Updated to persistent disk path
 
 // Create uploads directory if it doesn't exist
-const uploadDir = './uploads';
+const uploadDir = '/uploads'; // Use Render's persistent disk path
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -40,10 +46,7 @@ const connectDB = async () => {
   let retries = 5;
   while (retries) {
     try {
-      await mongoose.connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
+      await mongoose.connect(process.env.MONGO_URI); // Removed deprecated options
       console.log('Connected to MongoDB');
       break;
     } catch (err) {
@@ -93,17 +96,34 @@ const authenticateToken = (req, res, next) => {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, './uploads/');
+    cb(null, '/uploads/'); // Updated to persistent disk path
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    const name = path.basename(file.originalname, ext);
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, `${name}-${uniqueSuffix}${ext}`);
+    let baseName = path.basename(file.originalname, ext);
+    let newFilename = file.originalname;
+    let index = 1;
+
+    while (fs.existsSync(path.join('/uploads/', newFilename))) {
+      newFilename = `${baseName}(${index})${ext}`;
+      index++;
+    }
+
+    cb(null, newFilename);
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedType = 'application/pdf';
+    if (file.mimetype !== allowedType) {
+      return cb(new Error('Only PDF files are allowed'));
+    }
+    cb(null, true);
+  },
+});
 
 app.post('/api/admin/login', async (req, res) => {
   try {
