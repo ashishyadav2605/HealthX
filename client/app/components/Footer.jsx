@@ -55,17 +55,17 @@ export default function Footer() {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <i className="ri-phone-line text-blue-400"></i>
-                <span className="text-gray-400">+1 (555) 123-4567</span>
+                <span className="text-gray-400">+91 9911005312</span>
               </div>
               <div className="flex items-center space-x-3">
                 <i className="ri-mail-line text-blue-400"></i>
-                <span className="text-gray-400">support@healthx.com</span>
+                <span className="text-gray-400">iashishyadav17@gmail.com</span>
               </div>
               <div className="flex items-start space-x-3">
                 <i className="ri-map-pin-line text-blue-400 mt-1"></i>
                 <span className="text-gray-400">
-                  123 Healthcare Ave<br />
-                  Medical District, MD 12345
+                  Chitkara University<br />
+                  Baddi, Himachal Pradesh, India
                 </span>
               </div>
             </div>
@@ -80,7 +80,7 @@ export default function Footer() {
               <Link href="#cookies" className="text-gray-400 hover:text-white transition-colors cursor-pointer">Cookie Policy</Link>
             </div>
             <p className="text-gray-400">
-              © 2024 HealthX. All rights reserved.
+              © 2025 HealthX. All rights reserved.
             </p>
           </div>
         </div>
