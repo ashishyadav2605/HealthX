@@ -47,9 +47,8 @@ A **full-stack web application** where users can:
 
 ### 1. Clone the Repository
 
-```bash
-git clone https://github.com/ashishyadav2605/Aarogya-task.git
-cd healthx
+cd git clone https://github.com/ashishyadav2605/Aarogya-task.git
+cd Aarogya-task
 ```
 
 ---
@@ -64,7 +63,7 @@ npm install
 🔐 Create a `.env` file inside the `backend/` directory:
 
 ```env
-PORT=3000
+PORT=5000
 MONGO_URI=your_mongodb_uri
 JWT_SECRET=your_jwt_secret
 ADMIN_EMAIL=admin@gmail.com
@@ -77,7 +76,7 @@ ADMIN_PASSWORD=admin123
 npm run start
 ```
 
-> Backend will run at: `http://localhost:3000`
+> Backend will run at: `http://localhost:5000`
 
 ---
 
