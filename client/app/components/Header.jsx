@@ -22,7 +22,7 @@ export default function Header() {
       setUserEmail(cachedEmail);
       setLoading(false);
     } else if (token) {
-      fetch('http://localhost:5000/api/auth/profile', {
+      fetch('https://aarogya-task.onrender.com/api/auth/profile', {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())

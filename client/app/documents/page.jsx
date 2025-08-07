@@ -19,7 +19,7 @@ export default function Documents() {
       return;
     }
 
-    fetch('http://localhost:5000/api/auth/profile-with-timestamps', {
+    fetch('https://aarogya-task.onrender.com/api/auth/profile-with-timestamps', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -141,7 +141,7 @@ export default function Documents() {
                     {viewMode === 'original' ? (
                       <div className="mt-4">
                         <a
-                          href={`http://localhost:5000/${doc.path}`}
+                          href={`https://aarogya-task.onrender.com/${doc.path}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"

@@ -62,7 +62,7 @@ export default function Upload() {
     formData.append('document', file);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/upload', {
+      const response = await fetch('https://aarogya-task.onrender.com/api/auth/upload', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,

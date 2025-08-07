@@ -19,7 +19,7 @@ if (!process.env.MONGO_URI || !process.env.JWT_SECRET || !process.env.ADMIN_EMAI
 
 const app = express();
 app.use(cors({
-  origin: 'http://localhost:3000', // Adjust to your frontend URL
+  origin: 'https://aarogya-task-ashish.vercel.app', // Adjust to your frontend URL
   credentials: true,
 }));
 app.use(express.json());
