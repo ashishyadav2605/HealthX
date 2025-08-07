@@ -58,7 +58,7 @@ export default function Auth() {
           theme: "light",
           onClose: () => {
             setIsLogin(true); 
-            router.push('/login'); 
+            router.push('/auth'); 
           }
         });
       }
