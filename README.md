@@ -9,7 +9,7 @@ A **full-stack web application** where users can:
 - ⏱️ View upload history with timestamps  
 - 📊 Admin: View user/document stats  
 
-🔗 **Live App**: [https://aarogya-task-ashish.vercel.app]  
+🔗 **Live App**: [https://healthx-ashish.vercel.app/]  
 🔗 **Backend API**: [https://aarogya-task.onrender.com]
 
 ---
